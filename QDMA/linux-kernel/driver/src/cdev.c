@@ -51,6 +51,7 @@ struct xlnx_phy_dev {
 	struct list_head list_head;	/**< board list */
 	unsigned int major;	/**< major number per board */
 	unsigned int device_bus;	/**< PCIe device bus number per board */
+	unsigned int device_bus_domain; /**< PCIe bus domain per board */
 	unsigned int dma_device_index;
 };
 
@@ -743,6 +744,7 @@ int qdma_cdev_device_init(struct qdma_cdev_cb *xcb)
 	xdev = (struct xlnx_dma_dev *)xcb->xpdev->dev_hndl;
 	list_for_each_entry_safe(phy_dev, tmp, &xlnx_phy_dev_list, list_head) {
 		if (phy_dev->device_bus == xcb->xpdev->pdev->bus->number &&
+            phy_dev->device_bus_domain == xcb->xpdev->pdev->bus->domain_nr &&
 			phy_dev->dma_device_index == xdev->dma_device_index) {
 			xcb->cdev_major = phy_dev->major;
 			mutex_unlock(&xlnx_phy_dev_mutex);
@@ -768,6 +770,7 @@ int qdma_cdev_device_init(struct qdma_cdev_cb *xcb)
 
 	new_phy_dev->major = xcb->cdev_major;
 	new_phy_dev->device_bus = xcb->xpdev->pdev->bus->number;
+	new_phy_dev->device_bus_domain = xcb->xpdev->pdev->bus->domain_nr;
 	new_phy_dev->dma_device_index = xdev->dma_device_index;
 	xlnx_phy_dev_list_add(new_phy_dev);
 

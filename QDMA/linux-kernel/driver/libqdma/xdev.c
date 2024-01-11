@@ -305,7 +305,7 @@ int xdev_list_dump(char *buf, int buflen)
 	mutex_lock(&xdev_mutex);
 	list_for_each_entry_safe(xdev, tmp, &xdev_list, list_head) {
 		len += snprintf(buf + len, buflen - len,
-				"qdma%05x\t%02x:%02x.%02x\n",
+				"qdma%09x\t%02x:%02x.%02x\n",
 				xdev->conf.bdf, xdev->conf.pdev->bus->number,
 				PCI_SLOT(xdev->conf.pdev->devfn),
 				PCI_FUNC(xdev->conf.pdev->devfn));
@@ -334,7 +334,8 @@ static inline void xdev_list_add(struct xlnx_dma_dev *xdev)
 	u32 last_dev = 0;
 
 	mutex_lock(&xdev_mutex);
-	bdf = ((xdev->conf.pdev->bus->number << PCI_SHIFT_BUS) |
+	bdf = ((xdev->conf.pdev->bus->domain_nr << PCI_SHIFT_DOMAIN) |
+			(xdev->conf.pdev->bus->number << PCI_SHIFT_BUS) |
 			(PCI_SLOT(xdev->conf.pdev->devfn) << PCI_SHIFT_DEV) |
 			PCI_FUNC(xdev->conf.pdev->devfn));
 	xdev->conf.bdf = bdf;
@@ -1052,7 +1053,7 @@ int qdma_device_open(const char *mod_name, struct qdma_dev_conf *conf,
 	xdev_list_add(xdev);
 
 	rv = snprintf(xdev->conf.name, QDMA_DEV_NAME_MAXLEN,
-		"qdma%05x-p%s",
+		"qdma%09x-p%s",
 		xdev->conf.bdf, dev_name(&xdev->conf.pdev->dev));
 	xdev->conf.name[rv] = '\0';
 

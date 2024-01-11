@@ -271,7 +271,7 @@ static int parse_ifname(char *name, struct xcmd_info *xcmd)
 	char *p;
 
 	/* qdmaN of qdmavfN*/
-	if (len > 11) {
+	if (len > 11+4) {   //+4 to include the domain number
 		warnx("interface name %s too long, expect qdma<N>.\n", name);
 		return -EINVAL;
 	}

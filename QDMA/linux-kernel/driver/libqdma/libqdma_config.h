@@ -44,6 +44,9 @@
  */
 #define MAX_DMA_DEV 32
 
+
+#define PCI_SHIFT_DOMAIN 20
+
 /**
  * Shift for bus 'B' in B:D:F
  */
